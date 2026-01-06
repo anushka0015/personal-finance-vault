@@ -1,9 +1,20 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
 
 def home(request):
-    return HttpResponse("Welcome to Personal Finance Vault")
-def signup(request):
-    return render(request, 'users/signup.html')
+    return render(request, 'users/home.html')
 
-# Create your views here.
+def signup(request):
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        # create user
+        User.objects.create_user(
+            username=username,
+            password=password
+        )
+
+        return redirect('home')
+
+    return render(request, 'users/signup.html')
