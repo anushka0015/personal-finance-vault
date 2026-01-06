@@ -6,7 +6,7 @@
 <body>
     <h2>Welcome {{ request.user.username }} 🎉</h2>
 
-    <p>You are logged in.</p>
+    <p><strong>Wallet Balance:</strong> ₹ {{ wallet.balance }}</p>
 
     <a href="{% url 'logout' %}">Logout</a>
 </body>

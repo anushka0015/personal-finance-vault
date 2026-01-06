@@ -3,32 +3,38 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+from .models import Wallet
 
 
 @login_required(login_url='login')
 def home(request):
-    return render(request, 'users/home.html')
-
+    wallet, created = Wallet.objects.get_or_create(user=request.user)
+    return render(request, 'users/home.html', {
+        'wallet': wallet
+    })
 
 def signup(request):
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-        # check if username already exists
         if User.objects.filter(username=username).exists():
             return render(request, 'users/signup.html', {
                 'error': 'Username already exists'
             })
 
-        User.objects.create_user(
+        user = User.objects.create_user(
             username=username,
             password=password
         )
+
+        # create wallet for user
+        Wallet.objects.create(user=user)
+
         return redirect('login')
 
     return render(request, 'users/signup.html')
-    return render(request, 'users/signup.html')
+
 
 def user_login(request):
     if request.method == "POST":
